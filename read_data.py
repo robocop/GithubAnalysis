@@ -15,9 +15,7 @@ def mean(lst):
     return numpy.mean(numpy.array(lst))
 
 
-def get_bipartite_graph(input_file):
-    B = nx.Graph()
-
+def get_bipartite_graph(B,input_file):
     for line in gzip.open(input_file):
         data_line = json.loads(line.decode('utf8'))
 
@@ -65,9 +63,10 @@ def general_characteristics(G):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit('Provide exactly one archive in input')
-    B = get_bipartite_graph(sys.argv[1])
+    if len(sys.argv) < 2:
+        sys.exit('Syntax: ./%s <github archives>' % sys.argv[0])
+    B = nx.Graph()
+    for i in range(1,len(sys.argv)):
+        get_bipartite_graph(B,sys.argv[i])
     G = build_community_graph_from_bipartite_graph(B)
-
     general_characteristics(G)
