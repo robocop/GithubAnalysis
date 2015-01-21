@@ -6,6 +6,14 @@ import networkx as nx
 import sys
 import matplotlib as plt
 
+import numpy
+
+def median(lst):
+    return numpy.median(numpy.array(lst))
+
+def mean(lst):
+    return numpy.mean(numpy.array(lst))
+
 
 def get_bipartite_graph(input_file):
     B = nx.Graph()
@@ -49,6 +57,8 @@ def general_characteristics(G):
     print('Average cluestering number: %f' % nx.average_clustering(G))
     print('Number of connected components: %d' % nx.number_connected_components(G))
     print('Size of the smallest connected component: %d' % min([len(cc) for cc in nx.connected_components(G)]))
+    print('Median size of connected component: %f' % median([len(cc) for cc in nx.connected_components(G)]))
+    print('Mean size of connected component: %f' % mean([len(cc) for cc in nx.connected_components(G)]))
     print('Size of the biggest connected component: %d' % max([len(cc) for cc in nx.connected_components(G)]))
 
 
