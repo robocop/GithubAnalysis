@@ -6,10 +6,16 @@ import networkx as nx
 import sys
 import matplotlib.pyplot as plt
 
+import numpy
 
-def get_bipartite_graph(input_file):
-    B = nx.Graph()
+def median(lst):
+    return numpy.median(numpy.array(lst))
 
+def mean(lst):
+    return numpy.mean(numpy.array(lst))
+
+
+def get_bipartite_graph(B,input_file):
     for line in gzip.open(input_file):
         data_line = json.loads(line.decode('utf8'))
 
@@ -36,8 +42,19 @@ def general_characteristics(G):
     print('Number of nodes: %d' % G.number_of_nodes())
     print('Number of edges: %d' % G.number_of_edges())
     print('Average cluestering number: %f' % nx.average_clustering(G))
+    print('Number of connected components: %d' % nx.number_connected_components(G))
+    print('Size of the smallest connected component: %d' % min([len(cc) for cc in nx.connected_components(G)]))
+    print('Median size of connected component: %f' % median([len(cc) for cc in nx.connected_components(G)]))
+    print('Mean size of connected component: %f' % mean([len(cc) for cc in nx.connected_components(G)]))
+    print('Size of the biggest connected component: %d' % max([len(cc) for cc in nx.connected_components(G)]))
 
-
+def remove_isolated_nodes(G,degree):
+    modified = False
+    for n in G.nodes():
+        if nx.degree(G,n) <= degree: # fix the lowest degree
+            G.remove_node(n)
+            modified = True
+    return modified
 
     plt.plot(nx.degree_histogram(G))
     print('ok')
@@ -46,9 +63,12 @@ def general_characteristics(G):
     plt.show()
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit('Provide exactly one archive in input')
-    B = get_bipartite_graph(sys.argv[1])
+    if len(sys.argv) < 2:
+        sys.exit('Syntax: ./%s <github archives>' % sys.argv[0])
+    B = nx.Graph()
+    for i in range(1,len(sys.argv)):
+        get_bipartite_graph(B,sys.argv[i])
     G = build_community_graph_from_bipartite_graph(B)
-
+    while(remove_isolated_nodes(G,5)):
+        print("iteration")
     general_characteristics(G)
