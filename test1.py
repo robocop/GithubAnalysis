@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import gzip
 import sys
 import json
@@ -10,4 +12,4 @@ def actor(input_file):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         sys.exit('Provide exactly one archive in input')
-    actor(input_file)
+    actor(sys.argv[1])
