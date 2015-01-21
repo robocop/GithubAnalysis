@@ -98,7 +98,7 @@ def communityGraph(G,k):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.exit('Syntax: ./%s <github archives>' % sys.argv[0])
+        sys.exit('Syntax: %s <github archives>' % sys.argv[0])
     B = nx.Graph()
     for i in range(1,len(sys.argv)):
         get_bipartite_graph(B,sys.argv[i])
