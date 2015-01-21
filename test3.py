@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 
 #from networkx.algorithms import bipartite
 
-
 def get_bipartite_graph(input_file):
     B = nx.Graph()
 
@@ -22,19 +21,13 @@ def get_bipartite_graph(input_file):
         B.add_node(data_line['actor']['login'], bipartite=0)
         B.add_node(data_line['repo']['name'], bipartite=1)
         B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
-
-        rem_list = []
         
-        for n in B.nodes():
-            if len(nx.node_connected_component(B,n)) < 3:
-                rem_list.append(n)
-
-        B.remove_nodes_from(rem_list)
-
-        #print('Author = %s, Repo = %s, Action = %s' % (data_line['actor']['login'], data_line['repo']['name'], data_line['type']))
-        
-        if i > 500:
+        if i == 5000:
             break
+
+    for n in B.nodes():
+        if len(nx.node_connected_component(B,n)) < 5: # fix the lowest degree
+            B.remove_node(n)
 
     nx.draw(B)
     plt.show()
