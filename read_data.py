@@ -18,7 +18,6 @@ def mean(lst):
 def get_bipartite_graph(B,input_file):
     for line in gzip.open(input_file):
         data_line = json.loads(line.decode('utf8'))
-
         B.add_node(data_line['actor']['login'], bipartite=0)
         B.add_node(data_line['repo']['name'], bipartite=1)
         B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
@@ -41,12 +40,18 @@ def general_characteristics(G):
     print('Density: %f' % nx.density(G))
     print('Number of nodes: %d' % G.number_of_nodes())
     print('Number of edges: %d' % G.number_of_edges())
-    print('Average cluestering number: %f' % nx.average_clustering(G))
+    #print('Average cluestering number: %f' % nx.average_clustering(G))
     print('Number of connected components: %d' % nx.number_connected_components(G))
     print('Size of the smallest connected component: %d' % min([len(cc) for cc in nx.connected_components(G)]))
     print('Median size of connected component: %f' % median([len(cc) for cc in nx.connected_components(G)]))
     print('Mean size of connected component: %f' % mean([len(cc) for cc in nx.connected_components(G)]))
     print('Size of the biggest connected component: %d' % max([len(cc) for cc in nx.connected_components(G)]))
+
+    plt.plot(nx.degree_histogram(G))
+    plt.axis([0, 20, 0, 30000])
+
+    plt.show()
+
 
 def remove_isolated_nodes(G,degree):
     modified = False
@@ -56,11 +61,8 @@ def remove_isolated_nodes(G,degree):
             modified = True
     return modified
 
-    plt.plot(nx.degree_histogram(G))
-    print('ok')
-    plt.axis([0, 5, 0, 4000])
-
-    plt.show()
+def save_graph(G, file):
+    nx.write_graphml(G, file)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -72,3 +74,4 @@ if __name__ == "__main__":
     while(remove_isolated_nodes(G,5)):
         print("iteration")
     general_characteristics(G)
+    save_graph(G, 'test.graphml')
