@@ -79,6 +79,23 @@ def remove_small_connected_components(G,size):
     for n in nodes_to_remove:
         G.remove_node(n)
 
+def communityGraph(G,k):
+    """
+        Return the graph whose nodes are k-cliques.
+    """
+    alias = {}
+    communities = list(set(x) for x in nx.k_clique_communities(G,k))
+    H = nx.Graph()
+    for i in range (0,len(communities)):
+        H.add_node(i)
+        alias[i] = communities[i]
+    for (u,v) in G.edges():
+        for i in range(0,len(communities)):
+            for j in range(0,len(communities)):
+                if u in alias[i] and v in alias[j]:
+                    H.add_edge(i,j)
+    return (H,alias)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit('Syntax: ./%s <github archives>' % sys.argv[0])
@@ -90,5 +107,8 @@ if __name__ == "__main__":
 #        print("iteration")
 #    remove_small_connected_components(G,10)
     general_characteristics(G,4)
-#    nx.draw(G)
-#    plt.show()
+    (H,alias) = communityGraph(G,4)
+    print("")
+    general_characteristics(H,4)
+    nx.draw(H)
+    plt.show()
