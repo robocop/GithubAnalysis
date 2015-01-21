@@ -59,7 +59,13 @@ def general_characteristics(G):
     print('Mean size of connected component: %f' % mean([len(cc) for cc in nx.connected_components(G)]))
     print('Size of the biggest connected component: %d' % max([len(cc) for cc in nx.connected_components(G)]))
 
-
+def remove_isolated_nodes(G,degree):
+    modified = False
+    for n in G.nodes():
+        if nx.degree(G,n) <= degree: # fix the lowest degree
+            G.remove_node(n)
+            modified = True
+    return modified
 
 
 if __name__ == "__main__":
@@ -69,4 +75,6 @@ if __name__ == "__main__":
     for i in range(1,len(sys.argv)):
         get_bipartite_graph(B,sys.argv[i])
     G = build_community_graph_from_bipartite_graph(B)
+    while(remove_isolated_nodes(G,5)):
+        print("iteration")
     general_characteristics(G)
