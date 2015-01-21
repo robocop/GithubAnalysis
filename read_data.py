@@ -1,13 +1,17 @@
+#!/usr/bin/env python3
+
 import gzip
 import json
 import networkx as nx
-from networkx.algorithms import bipartite
+import sys
+
+#from networkx.algorithms import bipartite
 
 
-def get_bipartite_graph():
+def get_bipartite_graph(input_file):
     B = nx.Graph()
 
-    for line in gzip.open('data/2015-01-01-15.json.gz'):
+    for line in gzip.open(input_file):
         data_line = json.loads(line.decode('utf8'))
 
         B.add_node(data_line['actor']['login'], bipartite=0)
@@ -21,5 +25,7 @@ def get_bipartite_graph():
 
 
 if __name__ == "__main__":
-    B = get_bipartite_graph()
+    if len(sys.argv) != 2:
+        sys.exit('Provide exactly one archive in input')
+    B = get_bipartite_graph(sys.argv[1])
     nx.draw_networkx(B)
