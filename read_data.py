@@ -91,7 +91,7 @@ def communityGraph(G,k):
         alias[i] = communities[i]
     for (u,v) in G.edges():
         for i in range(0,len(communities)):
-            for j in range(0,len(communities)):
+            for j in range(i+1,len(communities)):
                 if u in alias[i] and v in alias[j]:
                     H.add_edge(i,j)
     return (H,alias)
@@ -106,9 +106,10 @@ if __name__ == "__main__":
 #    while(remove_isolated_nodes(G,10)):
 #        print("iteration")
 #    remove_small_connected_components(G,10)
-    general_characteristics(G,4)
+#    general_characteristics(G,4)
     (H,alias) = communityGraph(G,4)
-    print("")
-    general_characteristics(H,4)
-    nx.draw(H)
-    plt.show()
+#    print("")
+#    general_characteristics(H,4)
+#    nx.draw(H)
+#    plt.show()
+    nx.write_dot(H,"graph.dot") # only python2
