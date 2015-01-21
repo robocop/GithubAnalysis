@@ -5,6 +5,9 @@ import sys
 import json
 
 def actor(input_file):
+    """
+        Print all the actor/repository id pairs
+    """
     for line in gzip.open(input_file):
         data = json.loads(line.decode())
         print(data["actor"]["id"], data["repo"]["id"])
