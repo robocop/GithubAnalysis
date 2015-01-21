@@ -4,7 +4,7 @@ import gzip
 import json
 import networkx as nx
 import sys
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 import numpy
 
@@ -48,16 +48,23 @@ def build_community_graph_from_bipartite_graph(bipartite_graph):
     return G
 
 
-def general_characteristics(G):
+def general_characteristics(G,k=3):
     print('Density: %f' % nx.density(G))
     print('Number of nodes: %d' % G.number_of_nodes())
     print('Number of edges: %d' % G.number_of_edges())
     print('Average cluestering number: %f' % nx.average_clustering(G))
-    print('Number of connected components: %d' % nx.number_connected_components(G))
-    print('Size of the smallest connected component: %d' % min([len(cc) for cc in nx.connected_components(G)]))
-    print('Median size of connected component: %f' % median([len(cc) for cc in nx.connected_components(G)]))
-    print('Mean size of connected component: %f' % mean([len(cc) for cc in nx.connected_components(G)]))
-    print('Size of the biggest connected component: %d' % max([len(cc) for cc in nx.connected_components(G)]))
+    connected_components = list(nx.connected_components(G))
+    print('Number of connected components: %d' % len(connected_components))
+    print('Size of the smallest connected component: %d' % min([len(cc) for cc in connected_components]))
+    print('Median size of connected component: %f' % median([len(cc) for cc in connected_components]))
+    print('Mean size of connected component: %f' % mean([len(cc) for cc in connected_components]))
+    print('Size of the biggest connected component: %d' % max([len(cc) for cc in connected_components]))
+    kcliques = list(nx.k_clique_communities(G,k))
+    print('Number of %d-clique communities: %d' % (k,len(kcliques)))
+    print('Size of the smallest %d-clique communities: %d' % (k,min([len(cc) for cc in kcliques])))
+    print('Median size of %d-clique communities: %f' % (k,median([len(cc) for cc in kcliques])))
+    print('Mean size of %d-clique communities: %f' % (k,mean([len(cc) for cc in kcliques])))
+    print('Size of the biggest %d-clique communities: %d' % (k,max([len(cc) for cc in kcliques])))
 
 def remove_isolated_nodes(G,degree):
     modified = False
@@ -67,14 +74,41 @@ def remove_isolated_nodes(G,degree):
             modified = True
     return modified
 
+def remove_small_connected_components(G,size):
+    nodes_to_remove = [n for cc in nx.connected_components(G) for n in cc if len(cc) <= size]
+    for n in nodes_to_remove:
+        G.remove_node(n)
+
+def communityGraph(G,k):
+    """
+        Return the graph whose nodes are k-cliques.
+    """
+    alias = {}
+    communities = list(set(x) for x in nx.k_clique_communities(G,k))
+    H = nx.Graph()
+    for i in range (0,len(communities)):
+        H.add_node(i)
+        alias[i] = communities[i]
+    for (u,v) in G.edges():
+        for i in range(0,len(communities)):
+            for j in range(0,len(communities)):
+                if u in alias[i] and v in alias[j]:
+                    H.add_edge(i,j)
+    return (H,alias)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.exit('Syntax: ./%s <github archives>' % sys.argv[0])
+        sys.exit('Syntax: %s <github archives>' % sys.argv[0])
     B = nx.Graph()
     for i in range(1,len(sys.argv)):
         get_bipartite_graph(B,sys.argv[i])
     G = build_community_graph_from_bipartite_graph(B)
-    while(remove_isolated_nodes(G,5)):
-        print("iteration")
-    general_characteristics(G)
+#    while(remove_isolated_nodes(G,10)):
+#        print("iteration")
+#    remove_small_connected_components(G,10)
+    general_characteristics(G,4)
+    (H,alias) = communityGraph(G,4)
+    print("")
+    general_characteristics(H,4)
+    nx.draw(H)
+    plt.show()
