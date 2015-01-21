@@ -11,13 +11,13 @@ def actor(input_file):
     for line in gzip.open(input_file):
         data = json.loads(line.decode())
         
-        #print(data)
-        #return
+        print(data)
+        return
         
         #if "description" in data["payload"]:
         #    print(data["actor"]["login"], data["repo"]["name"], data["payload"]["description"])
 
-        print(data["actor"]["login"], data["repo"]["name"])
+        #print(data["actor"]["login"], data["repo"]["name"])
                 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

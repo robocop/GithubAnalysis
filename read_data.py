@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import gzip
 import json
+import sys
 
-
-def actor():
+def actor(input_file):
     i = 0
-    for line in gzip.open('data/2015-01-01-15.json.gz'):
+    for line in gzip.open(input_file):
         data_line = json.loads(line.decode('utf8'))
         if i == 0:
             print(data_line)
@@ -14,4 +16,6 @@ def actor():
 
 
 if __name__ == "__main__":
-    actor()
+    if len(sys.argv) != 2:
+        sys.exit('Provide exactly one archive in input')
+    actor(sys.argv[1])
