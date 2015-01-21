@@ -48,6 +48,8 @@ def general_characteristics(G):
     print('Number of edges: %d' % G.number_of_edges())
     print('Average cluestering number: %f' % nx.average_clustering(G))
     print('Number of connected components: %d' % nx.number_connected_components(G))
+    print('Size of the smallest connected component: %d' % min([len(cc) for cc in nx.connected_components(G)]))
+    print('Size of the biggest connected component: %d' % max([len(cc) for cc in nx.connected_components(G)]))
 
 
 
