@@ -47,6 +47,7 @@ def general_characteristics(G):
     print('Number of nodes: %d' % G.number_of_nodes())
     print('Number of edges: %d' % G.number_of_edges())
     print('Average cluestering number: %f' % nx.average_clustering(G))
+    print('Number of connected components: %d' % nx.number_connected_components(G))
 
 
 
