@@ -4,7 +4,7 @@ import gzip
 import json
 import networkx as nx
 import sys
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 def get_bipartite_graph(input_file):
@@ -29,18 +29,7 @@ def get_repos(bipartite_graph):
     return set(n for n,d in bipartite_graph.nodes(data=True) if d['bipartite']==1)
 
 def build_community_graph_from_bipartite_graph(bipartite_graph):
-    G = nx.Graph()
-    authors = get_authors(bipartite_graph)
-
-    for x in authors:
-        G.add_node(x)
-        repos = bipartite_graph.neighbors(x)
-        for repo in repos:
-            for y in bipartite_graph.neighbors(repo):
-                if x != y:
-                    G.add_edge(x, y)
-    return G
-
+    return nx.projected_graph(bipartite_graph, get_authors(bipartite_graph))
 
 def general_characteristics(G):
     print('Density: %f' % nx.density(G))
@@ -50,6 +39,11 @@ def general_characteristics(G):
 
 
 
+    plt.plot(nx.degree_histogram(G))
+    print('ok')
+    plt.axis([0, 5, 0, 4000])
+
+    plt.show()
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
