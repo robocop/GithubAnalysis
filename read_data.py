@@ -178,7 +178,7 @@ if __name__ == "__main__":
     CommunityG = CommunityGraph(B)
     CommunityG.remove_small_connected_components(5)
 
-    ### Print general characteristics of a community graph
+    ### Print general charesteristics of a community graph
     #CommunityG.general_characteristics(4)
     #print('')
 
