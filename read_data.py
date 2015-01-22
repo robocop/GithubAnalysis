@@ -4,7 +4,7 @@ import gzip
 import json
 import networkx as nx
 import sys
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy
 
 
@@ -16,17 +16,46 @@ def mean(lst):
     return numpy.mean(numpy.array(lst))
 
 
+class GitHubActivity:
+    def __init__(self):
+        self.log = dict()
+
+    def add(self, id, value):
+        self.log[id] = value
+
+    def load_gz(self, input_file):
+        day = int(input_file.split('-')[2])
+        hour = int(input_file.split('-')[3].split('.')[0])
+        id = day*24+hour
+        i = sum(1 for line in gzip.open(input_file))
+
+        #print('%d %d' % (id, i))
+        self.add(id, i)
+
+    def plot(self):
+        x = []
+        y = []
+        for key in self.log.keys():
+            x.append(key/24.)
+            y.append(self.log[key])
+        plt.plot(x, y, 'r--')
+        plt.show()
+
+
 class BipartiteGraph:
     def __init__(self):
         self.B = nx.Graph()
 
     def load_gz(self, input_file):
         for line in gzip.open(input_file):
+
+
             data_line = json.loads(line.decode('utf8'))
 
             self.B.add_node(data_line['actor']['login'], bipartite=0)
             self.B.add_node(data_line['repo']['name'], bipartite=1)
             self.B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
+
 
     def get_authors(self):
         return set(n for n,d in self.B.nodes(data=True) if d['bipartite'] == 0)
@@ -97,28 +126,34 @@ class CommunityGraph:
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit('Syntax: %s <github archives>' % sys.argv[0])
+    Logger = GitHubActivity()
+
+
     B = BipartiteGraph()
     for i in range(1,len(sys.argv)):
-        B.load_gz(sys.argv[i])
+        #B.load_gz(sys.argv[i])
+        Logger.load_gz(sys.argv[i])
 
-    G = B.build_community_graph_from_bipartite_graph()
-    CommunityG = CommunityGraph(G)
+    Logger.plot()
+
+    #G = B.build_community_graph_from_bipartite_graph()
+    #CommunityG = CommunityGraph(G)
 
     #while CommunityG.remove_isolated_nodes(10):
     #    print("iteration")
 
     #CommunityG.remove_small_connected_components(10)
 
-    
-    CommunityG.general_characteristics(4)
-    print('')
 
-    (H,alias) = CommunityG.communityGraph(4)
-    CommunityH = CommunityGraph(H)
-    CommunityH.general_characteristics(4)
+    #CommunityG.general_characteristics(4)
+    #print('')
 
-    CommunityG.save__mml('G.graphml')
-    CommunityH.save__mml('H.graphml')
+    #(H,alias) = CommunityG.communityGraph(4)
+    #CommunityH = CommunityGraph(H)
+    #CommunityH.general_characteristics(4)
+
+    #CommunityG.save__mml('G.graphml')
+    #CommunityH.save__mml('H.graphml')
 
     #    nx.draw(H)
     #    plt.show()
