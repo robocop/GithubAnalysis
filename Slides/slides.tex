@@ -1,0 +1,80 @@
+\documentclass[10pt, compress]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage[ruled,vlined,english]{algorithm2e}
+\usetikzlibrary{arrows,automata,shapes,positioning,calc}
+
+\usepackage{float} % placement des figures
+\usepackage{amssymb} % symboles mathématiques
+\usepackage{graphicx} % affichage d'images
+\usepackage{url} % inclure des urls
+
+
+
+\title{GitHub activity}
+\subtitle{}
+\date{January 23, 2015}
+\institute{École Normale Supérieure de Lyon}
+\author{Quentin Cormier, Tom Cornebize, Yassine Hamoudi}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame} % Events on 48h the 1 and 2 January 2015
+    % From http://www.texample.net/tikz/examples/pie-chart-color/
+    \def\angle{0}
+    \def\radius{3}
+    \def\cyclelist{{"orange","blue","red","green"}}
+    \newcount\cyclecount \cyclecount=-1
+    \newcount\ind \ind=-1
+    \begin{figure}
+    \begin{tikzpicture}[nodes = {font=\sffamily}]
+      \foreach \percent/\name in {
+        52.1/PushEvent,
+        10.9/CreateEvent,
+        10.0/WatchEvent,
+        9.1/IssueCommentEvent,
+        5.0/IssuesEvent,
+        4.3/PullRequestEvent,
+        3.2/ForkEvent,
+        5.4/Other events
+%        1.7/DeleteEvent,
+%        1.3/PullRequestReviewCommentEvent,
+%        1.0/GollumEvent,
+%        0.6/CommitCommentEvent,
+%        0.4/ReleaseEvent,
+%        0.3/MemberEvent,
+%        0.1/PublicEvent
+        } {
+          \ifx\percent\empty\else               % If \percent is empty, do nothing
+            \global\advance\cyclecount by 1     % Advance cyclecount
+            \global\advance\ind by 1            % Advance list index
+            \ifnum3<\cyclecount                 % If cyclecount is larger than list
+              \global\cyclecount=0              %   reset cyclecount and
+              \global\ind=0                     %   reset list index
+            \fi
+            \pgfmathparse{\cyclelist[\the\ind]} % Get color from cycle list
+            \edef\color{\pgfmathresult}         %   and store as \color
+            % Draw angle and set labels
+            \draw[fill={\color!50},draw={\color}] (0,0) -- (\angle:\radius)
+              arc (\angle:\angle+\percent*3.6:\radius) -- cycle;
+            \node at (\angle+0.5*\percent*3.6:0.7*\radius) {\percent\,\%};
+            \node[pin=\angle+0.5*\percent*3.6:\name]
+              at (\angle+0.5*\percent*3.6:\radius) {};
+            \pgfmathparse{\angle+\percent*3.6}  % Advance angle
+            \xdef\angle{\pgfmathresult}         %   and store in \angle
+          \fi
+        };
+    \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+
+\end{document}
