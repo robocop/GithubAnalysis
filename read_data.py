@@ -46,15 +46,16 @@ class BipartiteGraph:
     def __init__(self):
         self.graph = nx.Graph()
 
-    def load_gz(self, input_file):
+    def load_gz(self, input_file, eventType = None):
         """
             Add the data of the file to the graph
         """
         for line in gzip.open(input_file):
             data_line = json.loads(line.decode('utf8'))
-            self.graph.add_node(data_line['actor']['login'], bipartite=0)
-            self.graph.add_node(data_line['repo']['name'], bipartite=1)
-            self.graph.add_edge(data_line['actor']['login'], data_line['repo']['name'])
+            if not eventType or data_line['type'] == eventType:
+                self.graph.add_node(data_line['actor']['login'], bipartite=0)
+                self.graph.add_node(data_line['repo']['name'], bipartite=1)
+                self.graph.add_edge(data_line['actor']['login'], data_line['repo']['name'])
 
     def get_authors(self):
         """
@@ -82,6 +83,35 @@ class BipartiteGraph:
         """
         return nx.projected_graph(self.graph, self.get_authors())
 
+    def clean(self):
+        connected_components = list(nx.connected_components(self.graph))
+        biggest = max(connected_components,key = lambda cc : len(cc))
+        for n in self.graph.nodes():
+            if n not in biggest:
+                self.graph.remove_node(n)
+
+    def general_characteristics(self, k=3):
+        print('Density: %f' % nx.density(self.graph))
+        print('Number of nodes: %d' % self.graph.number_of_nodes())
+        print('Number of edges: %d' % self.graph.number_of_edges())
+        connected_components = list(nx.connected_components(self.graph))
+        if(len(connected_components) == 1):
+            print('Diameter: %d' % nx.diameter(self.graph))
+        print('Average clustering number: %f' % nx.average_clustering(self.graph))
+        connected_components = list(nx.connected_components(self.graph))
+        print('Number of connected components: %d' % len(connected_components))
+        print('Size of the smallest connected component: %d' % min([len(cc) for cc in connected_components]))
+        print('Median size of connected component: %f' % median([len(cc) for cc in connected_components]))
+        print('Mean size of connected component: %f' % mean([len(cc) for cc in connected_components]))
+        print('Size of the biggest connected component: %d' % max([len(cc) for cc in connected_components]))
+        kcliques = list(nx.k_clique_communities(self.graph,k))
+        print('Number of %d-clique communities: %d' % (k,len(kcliques)))
+        if len(kcliques) > 0:
+            print('Size of the smallest %d-clique communities: %d' % (k,min([len(cc) for cc in kcliques])))
+            print('Median size of %d-clique communities: %f' % (k,median([len(cc) for cc in kcliques])))
+            print('Mean size of %d-clique communities: %f' % (k,mean([len(cc) for cc in kcliques])))
+            print('Size of the biggest %d-clique communities: %d' % (k,max([len(cc) for cc in kcliques])))
+
 class CommunityGraph:
     """
         A graph that links all the users that worked on a same project
@@ -96,8 +126,10 @@ class CommunityGraph:
         print('Density: %f' % nx.density(self.graph))
         print('Number of nodes: %d' % self.graph.number_of_nodes())
         print('Number of edges: %d' % self.graph.number_of_edges())
-        print('Average clustering number: %f' % nx.average_clustering(self.graph))
         connected_components = list(nx.connected_components(self.graph))
+        if(len(connected_components) == 1):
+            print('Diameter: %d' % nx.diameter(self.graph))
+        print('Average clustering number: %f' % nx.average_clustering(self.graph))
         print('Number of connected components: %d' % len(connected_components))
         print('Size of the smallest connected component: %d' % min([len(cc) for cc in connected_components]))
         print('Median size of connected component: %f' % median([len(cc) for cc in connected_components]))
@@ -168,15 +200,27 @@ if __name__ == "__main__":
     ### Build a single graph with all the files
     B = BipartiteGraph()
     for i in range(1,len(sys.argv)):
-        B.load_gz(sys.argv[i])
+        B.load_gz(sys.argv[i],'PushEvent')
+
+    B.general_characteristics()
+
+    B.clean()
+
+    print('')
+
+    B.general_characteristics()
+
+    nx.write_graphml(B.graph, 'B.graphml')
+
+
 
     ### Read all the file of a folder
     #for file in os.listdir(sys.argv[1]):
     #    B.load_gz(sys.argv[1] + file)
 
     ### Build projection, remove small cc << take a BipartiteGraph as input and output a CommunityGraph
-    CommunityG = CommunityGraph(B)
-    CommunityG.remove_small_connected_components(5)
+#    CommunityG = CommunityGraph(B)
+#    CommunityG.remove_small_connected_components(5)
 
     ### Print general charesteristics of a community graph
     #CommunityG.general_characteristics(4)
@@ -187,7 +231,7 @@ if __name__ == "__main__":
     #CommunityH = CommunityGraph(H)
     #CommunityH.general_characteristics(4)
 
-    CommunityG.save__mml('G.graphml')
+#    CommunityG.save__mml('G.graphml')
 
     #CommunityH.save__mml('H.graphml')
 
