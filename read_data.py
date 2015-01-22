@@ -14,7 +14,6 @@ def median(lst):
 def mean(lst):
     return numpy.mean(numpy.array(lst))
 
-
 def get_bipartite_graph(B,input_file):
     for line in gzip.open(input_file):
         data_line = json.loads(line.decode('utf8'))
