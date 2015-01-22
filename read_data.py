@@ -39,7 +39,6 @@ class GitHubActivity:
         plt.plot(x, y, 'r--')
         plt.show()
 
-
 class BipartiteGraph:
     """
         A bipartite graph that links the users with the repositories they contributed to
@@ -154,15 +153,20 @@ class CommunityGraph:
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit('Syntax: %s <github archives>' % sys.argv[0])
-    Logger = GitHubActivity()
+
+
+    ### Log all data of all the files
+    #Logger = GitHubActivity()
+    #B = BipartiteGraph()
+    #for i in range(1,len(sys.argv)):
+    #    Logger.load_gz(sys.argv[i])
+    #
+    # Logger.plot()
 
     ### Build a single graph with all the files
     B = BipartiteGraph()
     for i in range(1,len(sys.argv)):
         B.load_gz(sys.argv[i])
-        #Logger.load_gz(sys.argv[i])
-
-	# Logger.plot()
 
     ### Read all the file of a folder
     #for file in os.listdir(sys.argv[1]):
