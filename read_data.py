@@ -4,111 +4,122 @@ import gzip
 import json
 import networkx as nx
 import sys
-import matplotlib.pyplot as plt
-
+#import matplotlib.pyplot as plt
 import numpy
+
 
 def median(lst):
     return numpy.median(numpy.array(lst))
 
+
 def mean(lst):
     return numpy.mean(numpy.array(lst))
 
-def get_bipartite_graph(B,input_file):
-    for line in gzip.open(input_file):
-        data_line = json.loads(line.decode('utf8'))
 
-        B.add_node(data_line['actor']['login'], bipartite=0)
-        B.add_node(data_line['repo']['name'], bipartite=1)
-        B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
+class BipartiteGraph:
+    def __init__(self):
+        self.B = nx.Graph()
 
-        # print('Author = %s, Repo = %s, Action = %s' %
-        #      (data_line['actor']['login'], data_line['repo']['name'], data_line['type']))
+    def load_gz(self, input_file):
+        for line in gzip.open(input_file):
+            data_line = json.loads(line.decode('utf8'))
 
-    return B
+            self.B.add_node(data_line['actor']['login'], bipartite=0)
+            self.B.add_node(data_line['repo']['name'], bipartite=1)
+            self.B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
 
-def get_authors(bipartite_graph):
-    return set(n for n,d in bipartite_graph.nodes(data=True) if d['bipartite']==0)
+    def get_authors(self):
+        return set(n for n,d in self.B.nodes(data=True) if d['bipartite'] == 0)
 
-def get_repos(bipartite_graph):
-    return set(n for n,d in bipartite_graph.nodes(data=True) if d['bipartite']==1)
+    def get_repos(self):
+        return set(n for n,d in self.B.nodes(data=True) if d['bipartite'] == 1)
 
-def build_community_graph_from_bipartite_graph(bipartite_graph):
-    G = nx.Graph()
-    authors = get_authors(bipartite_graph)
-
-    for x in authors:
-        G.add_node(x)
-        repos = bipartite_graph.neighbors(x)
-        for repo in repos:
-            for y in bipartite_graph.neighbors(repo):
-                if x != y:
-                    G.add_edge(x, y)
-    return G
+    def build_community_graph_from_bipartite_graph(self):
+        return nx.projected_graph(self.B, self.get_authors())
 
 
-def general_characteristics(G,k=3):
-    print('Density: %f' % nx.density(G))
-    print('Number of nodes: %d' % G.number_of_nodes())
-    print('Number of edges: %d' % G.number_of_edges())
-    print('Average cluestering number: %f' % nx.average_clustering(G))
-    connected_components = list(nx.connected_components(G))
-    print('Number of connected components: %d' % len(connected_components))
-    print('Size of the smallest connected component: %d' % min([len(cc) for cc in connected_components]))
-    print('Median size of connected component: %f' % median([len(cc) for cc in connected_components]))
-    print('Mean size of connected component: %f' % mean([len(cc) for cc in connected_components]))
-    print('Size of the biggest connected component: %d' % max([len(cc) for cc in connected_components]))
-    kcliques = list(nx.k_clique_communities(G,k))
-    print('Number of %d-clique communities: %d' % (k,len(kcliques)))
-    print('Size of the smallest %d-clique communities: %d' % (k,min([len(cc) for cc in kcliques])))
-    print('Median size of %d-clique communities: %f' % (k,median([len(cc) for cc in kcliques])))
-    print('Mean size of %d-clique communities: %f' % (k,mean([len(cc) for cc in kcliques])))
-    print('Size of the biggest %d-clique communities: %d' % (k,max([len(cc) for cc in kcliques])))
+class CommunityGraph:
+    def __init__(self, G):
+        self.G = G
 
-def remove_isolated_nodes(G,degree):
-    modified = False
-    for n in G.nodes():
-        if nx.degree(G,n) <= degree: # fix the lowest degree
-            G.remove_node(n)
-            modified = True
-    return modified
+    def general_characteristics(self, k=3):
+        print('Density: %f' % nx.density(self.G))
+        print('Number of nodes: %d' % self.G.number_of_nodes())
+        print('Number of edges: %d' % self.G.number_of_edges())
+        print('Average cluestering number: %f' % nx.average_clustering(self.G))
+        connected_components = list(nx.connected_components(self.G))
+        print('Number of connected components: %d' % len(connected_components))
+        print('Size of the smallest connected component: %d' % min([len(cc) for cc in connected_components]))
+        print('Median size of connected component: %f' % median([len(cc) for cc in connected_components]))
+        print('Mean size of connected component: %f' % mean([len(cc) for cc in connected_components]))
+        print('Size of the biggest connected component: %d' % max([len(cc) for cc in connected_components]))
+        kcliques = list(nx.k_clique_communities(self.G,k))
+        print('Number of %d-clique communities: %d' % (k,len(kcliques)))
+        if len(kcliques) > 0:
+            print('Size of the smallest %d-clique communities: %d' % (k,min([len(cc) for cc in kcliques])))
+            print('Median size of %d-clique communities: %f' % (k,median([len(cc) for cc in kcliques])))
+            print('Mean size of %d-clique communities: %f' % (k,mean([len(cc) for cc in kcliques])))
+            print('Size of the biggest %d-clique communities: %d' % (k,max([len(cc) for cc in kcliques])))
 
-def remove_small_connected_components(G,size):
-    nodes_to_remove = [n for cc in nx.connected_components(G) for n in cc if len(cc) <= size]
-    for n in nodes_to_remove:
-        G.remove_node(n)
+    def remove_isolated_nodes(self, degree):
+        modified = False
+        for n in self.G.nodes():
+            if nx.degree(self.G, n) <= degree: # fix the lowest degree
+                self.G.remove_node(n)
+                modified = True
+        return modified
 
-def communityGraph(G,k):
-    """
-        Return the graph whose nodes are k-cliques.
-    """
-    alias = {}
-    communities = list(set(x) for x in nx.k_clique_communities(G,k))
-    H = nx.Graph()
-    for i in range (0,len(communities)):
-        H.add_node(i)
-        alias[i] = communities[i]
-    for (u,v) in G.edges():
-        for i in range(0,len(communities)):
-            for j in range(i+1,len(communities)):
-                if u in alias[i] and v in alias[j]:
-                    H.add_edge(i,j)
-    return (H,alias)
+    def remove_small_connected_components(self, size):
+        nodes_to_remove = [n for cc in nx.connected_components(self.G) for n in cc if len(cc) <= size]
+        for n in nodes_to_remove:
+            self.G.remove_node(n)
+
+    def communityGraph(self, k):
+        """
+            Return the graph whose nodes are k-cliques.
+        """
+        alias = {}
+        communities = list(set(x) for x in nx.k_clique_communities(self.G, k))
+        H = nx.Graph()
+        for i in range (0,len(communities)):
+            H.add_node(i)
+            alias[i] = communities[i]
+        for (u,v) in self.G.edges():
+            for i in range(0,len(communities)):
+                for j in range(i+1,len(communities)):
+                    if u in alias[i] and v in alias[j]:
+                        H.add_edge(i,j)
+        return (H, alias)
+
+    def save__mml(self, file):
+        nx.write_graphml(self.G, file)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit('Syntax: %s <github archives>' % sys.argv[0])
-    B = nx.Graph()
+    B = BipartiteGraph()
     for i in range(1,len(sys.argv)):
-        get_bipartite_graph(B,sys.argv[i])
-    G = build_community_graph_from_bipartite_graph(B)
-#    while(remove_isolated_nodes(G,10)):
-#        print("iteration")
-#    remove_small_connected_components(G,10)
-#    general_characteristics(G,4)
-    (H,alias) = communityGraph(G,4)
-#    print("")
-#    general_characteristics(H,4)
-#    nx.draw(H)
-#    plt.show()
-    nx.write_dot(H,"graph.dot") # only python2
+        B.load_gz(sys.argv[i])
+
+    G = B.build_community_graph_from_bipartite_graph()
+    CommunityG = CommunityGraph(G)
+
+    #while CommunityG.remove_isolated_nodes(10):
+    #    print("iteration")
+
+    #CommunityG.remove_small_connected_components(10)
+
+    
+    CommunityG.general_characteristics(4)
+    print('')
+
+    (H,alias) = CommunityG.communityGraph(4)
+    CommunityH = CommunityGraph(H)
+    CommunityH.general_characteristics(4)
+
+    CommunityG.save__mml('G.graphml')
+    CommunityH.save__mml('H.graphml')
+
+    #    nx.draw(H)
+    #    plt.show()
+    #nx.write_dot(H,"graph.dot") # only python2
