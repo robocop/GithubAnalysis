@@ -27,13 +27,14 @@
 \maketitle
 
 
-\begin{frame}
+\begin{frame} % Events on 48h the 1 and 2 January 2015
     % From http://www.texample.net/tikz/examples/pie-chart-color/
     \def\angle{0}
     \def\radius{3}
     \def\cyclelist{{"orange","blue","red","green"}}
     \newcount\cyclecount \cyclecount=-1
     \newcount\ind \ind=-1
+    \begin{figure}
     \begin{tikzpicture}[nodes = {font=\sffamily}]
       \foreach \percent/\name in {
         52.1/PushEvent,
@@ -72,6 +73,7 @@
           \fi
         };
     \end{tikzpicture}
+    \end{figure}
 \end{frame}
 
 
