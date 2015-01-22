@@ -218,7 +218,8 @@ if __name__ == "__main__":
     ### Read all the file of a folder
     B = BipartiteGraph()
     for file in os.listdir(sys.argv[1]):
-        B.load_gz(sys.argv[1] + '/' + file)
+        print(file)
+        B.load_gz(sys.argv[1] + '/' + file,'IssuesEvent')
 
     ### Build projection, remove small cc << take a BipartiteGraph as input and output a CommunityGraph
     #CommunityG = CommunityGraph(B)
