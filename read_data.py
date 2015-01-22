@@ -4,7 +4,7 @@ import gzip
 import json
 import networkx as nx
 import sys
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy
 import os
 
@@ -13,6 +13,32 @@ def median(lst):
 
 def mean(lst):
     return numpy.mean(numpy.array(lst))
+
+class GitHubActivity:
+    def __init__(self):
+        self.log = dict()
+
+    def add(self, id, value):
+        self.log[id] = value
+
+    def load_gz(self, input_file):
+        day = int(input_file.split('-')[2])
+        hour = int(input_file.split('-')[3].split('.')[0])
+        id = day*24+hour
+        i = sum(1 for line in gzip.open(input_file))
+
+        #print('%d %d' % (id, i))
+        self.add(id, i)
+
+    def plot(self):
+        x = []
+        y = []
+        for key in self.log.keys():
+            x.append(key/24.)
+            y.append(self.log[key])
+        plt.plot(x, y, 'r--')
+        plt.show()
+
 
 class BipartiteGraph:
     """
@@ -128,12 +154,16 @@ class CommunityGraph:
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit('Syntax: %s <github archives>' % sys.argv[0])
+    Logger = GitHubActivity()
 
     ### Build a single graph with all the files
     B = BipartiteGraph()
     for i in range(1,len(sys.argv)):
         B.load_gz(sys.argv[i])
-    
+        #Logger.load_gz(sys.argv[i])
+
+	# Logger.plot()
+
     ### Read all the file of a folder
     #for file in os.listdir(sys.argv[1]):
     #    B.load_gz(sys.argv[1] + file)
