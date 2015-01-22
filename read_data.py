@@ -84,18 +84,29 @@ class BipartiteGraph:
         return nx.projected_graph(self.graph, self.get_authors())
 
     def clean(self):
-        connected_components = list(nx.connected_components(self.graph))
-        biggest = max(connected_components,key = lambda cc : len(cc))
-        for n in self.graph.nodes():
-            if n not in biggest:
-                self.graph.remove_node(n)
+        H=self.graph.copy()
+        connected_components = list(nx.connected_components(H))
+        biggest = sorted(connected_components,key = lambda cc : len(cc))
+        for n in H.nodes():
+            if n not in biggest[-1]:
+                H.remove_node(n)
+        i = -1
+        while(nx.diameter(H) <= 4):
+            print(i)
+            i-=1
+            H = self.graph.copy()
+            for n in H.nodes():
+                if n not in biggest[i]:
+                    H.remove_node(n)
+        print("i=%d" % i)
+        self.graph = H
 
-    def general_characteristics(self, k=3):
+    def general_characteristics(self, k=3,diameter=False):
         print('Density: %f' % nx.density(self.graph))
         print('Number of nodes: %d' % self.graph.number_of_nodes())
         print('Number of edges: %d' % self.graph.number_of_edges())
         connected_components = list(nx.connected_components(self.graph))
-        if(len(connected_components) == 1):
+        if diameter:
             print('Diameter: %d' % nx.diameter(self.graph))
         print('Average clustering number: %f' % nx.average_clustering(self.graph))
         connected_components = list(nx.connected_components(self.graph))
