@@ -1,9 +1,42 @@
-\documentclass[10pt, compress]{beamer}
+\documentclass[12pt,t]{beamer}
+
+\usetheme{default}
+\beamertemplatenavigationsymbolsempty
+\hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
+
+\definecolor{foreground}{RGB}{255,255,255}
+\definecolor{background}{RGB}{24,24,24}
+\definecolor{title}{RGB}{107,174,214}
+\definecolor{gray}{RGB}{155,155,155}
+\definecolor{darkBlue}{RGB}{27,84,124}
+\definecolor{darkGray}{RGB}{75,75,75}
+\definecolor{subtitle}{RGB}{102,255,204}
+\definecolor{hilight}{RGB}{102,255,204}
+\definecolor{vhilight}{RGB}{255,111,207}
+
+\setbeamercolor{titlelike}{fg=title}
+\setbeamercolor{subtitle}{fg=subtitle}
+\setbeamercolor{institute}{fg=gray}
+\setbeamercolor{normal text}{fg=foreground,bg=background}
+
+\setbeamercolor{item}{fg=foreground} % color of bullets
+\setbeamercolor{subitem}{fg=gray}
+\setbeamercolor{itemize/enumerate subbody}{fg=gray}
+\setbeamertemplate{itemize subitem}{{\textendash}}
+\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
+\setbeamerfont{itemize/enumerate subitem}{size=\footnotesize}
+
+%\setbeamertemplate{footline}{%
+%    \raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[20pt]{\color{gray}
+%          \scriptsize\insertframenumber}}}\hspace*{5pt}}
+
+
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
 
+\usepackage{multicol}
 \usepackage{booktabs}
 \usepackage{tikz}
 \usepackage[ruled,vlined,english]{algorithm2e}
@@ -13,6 +46,8 @@
 \usepackage{amssymb} % symboles mathématiques
 \usepackage{graphicx} % affichage d'images
 \usepackage{url} % inclure des urls
+
+
 
 \title{GitHub activity}
 \subtitle{}
@@ -24,15 +59,34 @@
 
 \maketitle
 
+\begin{frame}
+    \frametitle{GitHub?}
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+        \includegraphics[width=0.9\textwidth]{Octocat.png}
+        \end{figure}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item A web-based Git repository hosting service
+            \item More than 3 million users
+            \item More than 10 million repositories
+        \end{itemize}
+    \end{column}
+    \end{columns}
+\end{frame}
 
 \begin{frame} % Events on 48h the 1 and 2 January 2015
+    \frametitle{Type of events}
     % From http://www.texample.net/tikz/examples/pie-chart-color/
     \def\angle{0}
     \def\radius{3}
-    \def\cyclelist{{"orange","blue","red","green"}}
+    \def\cyclelist{{"darkBlue","darkGray","darkBlue","darkGray"}}
     \newcount\cyclecount \cyclecount=-1
     \newcount\ind \ind=-1
     \begin{figure}
+    \resizebox{.9\linewidth}{!}{
     \begin{tikzpicture}[nodes = {font=\sffamily}]
       \foreach \percent/\name in {
         52.1/PushEvent,
@@ -71,12 +125,18 @@
           \fi
         };
     \end{tikzpicture}
+    }
     \end{figure}
 \end{frame}
 
-\begin{frame}
-  \includegraphics[scale=0.3]{1.png}
+\begin{frame} % Events on 48h the 1 and 2 January 2015
+    \frametitle{Activity over one week}
+    (...)
 \end{frame}
 
+\begin{frame} % Events on 48h the 1 and 2 January 2015
+    \frametitle{Activity among one community}
+    (...)
+\end{frame}
 
 \end{document}

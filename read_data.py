@@ -222,7 +222,8 @@ if __name__ == "__main__":
     ### Read all the file of a folder
     B = BipartiteGraph()
     for file in os.listdir(sys.argv[1]):
-        B.load_gz(sys.argv[1] + file)
+        print(file)
+        B.load_gz(sys.argv[1] + '/' + file,'IssuesEvent')
 
     ### Build projection, remove small cc << take a BipartiteGraph as input and output a CommunityGraph
     #CommunityG = CommunityGraph(B)
@@ -237,12 +238,15 @@ if __name__ == "__main__":
     #CommunityH = CommunityGraph(H)
     #CommunityH.general_characteristics(4)
 
-    B.remove_small_connected_components(100)
-    
-    B.save__mml('B')
-    
-    #D = CommunityGraph(B)
-    #D.save__mml('D.graphml')
+#    B.remove_small_connected_components(100)
+    B.general_characteristics()
+
+    B.clean()
+
+    print('')
+
+    B.general_characteristics(diameter=True)
+    B.save__mml('B.graphml')
 
     #CommunityG.save__mml('G.graphml')
 
