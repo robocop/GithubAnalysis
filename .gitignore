@@ -10,3 +10,10 @@ htmlcov
 *.png
 *.orig
 *.gz
+*.pdf
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
