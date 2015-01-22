@@ -11,9 +11,7 @@ import pygraphviz
 
 #from networkx.algorithms import bipartite
 
-def get_bipartite_graph(input_file):
-    B = nx.Graph()
-
+def get_bipartite_graph(B,input_file):
     i = 0
     for line in gzip.open(input_file):
         i += 1
@@ -22,9 +20,9 @@ def get_bipartite_graph(input_file):
         B.add_node(data_line['actor']['login'], bipartite=0)
         B.add_node(data_line['repo']['name'], bipartite=1)
         B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
-        
-        if i == 1000:
-            break
+
+#        if i == 1000:
+#            break
 
     for n in B.nodes():
         if len(nx.node_connected_component(B,n)) < 5: # fix the lowest degree
@@ -36,6 +34,8 @@ def get_bipartite_graph(input_file):
     nx.write_dot(B,'e.dot')
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit('Provide exactly one archive in input')
-    get_bipartite_graph(sys.argv[1])
+    if len(sys.argv) < 2:
+        sys.exit('Syntax: %s <github archives>' % sys.argv[0])
+    B = nx.Graph()
+    for i in range(1,len(sys.argv)):
+        get_bipartite_graph(B,sys.argv[i])
