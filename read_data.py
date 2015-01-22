@@ -82,6 +82,12 @@ class BipartiteGraph:
         """
         return nx.projected_graph(self.graph, self.get_authors())
 
+    def save__mml(self, file):
+        """
+            Save the graph in mml format
+        """
+        nx.write_graphml(self.graph, file)
+
 class CommunityGraph:
     """
         A graph that links all the users that worked on a same project
@@ -166,17 +172,18 @@ if __name__ == "__main__":
     #Logger.plot()
 
     ### Build a single graph with all the files
-    B = BipartiteGraph()
-    for i in range(1,len(sys.argv)):
-        B.load_gz(sys.argv[i])
+    #B = BipartiteGraph()
+    #for i in range(1,len(sys.argv)):
+    #    B.load_gz(sys.argv[i])
 
     ### Read all the file of a folder
-    #for file in os.listdir(sys.argv[1]):
-    #    B.load_gz(sys.argv[1] + file)
+    B = BipartiteGraph()
+    for file in os.listdir(sys.argv[1]):
+        B.load_gz(sys.argv[1] + file)
 
     ### Build projection, remove small cc << take a BipartiteGraph as input and output a CommunityGraph
-    CommunityG = CommunityGraph(B)
-    CommunityG.remove_small_connected_components(5)
+    #CommunityG = CommunityGraph(B)
+    #CommunityG.remove_small_connected_components(50)
 
     ### Print general characteristics of a community graph
     #CommunityG.general_characteristics(4)
@@ -187,7 +194,10 @@ if __name__ == "__main__":
     #CommunityH = CommunityGraph(H)
     #CommunityH.general_characteristics(4)
 
-    CommunityG.save__mml('G.graphml')
+    B.remove_small_connected_components(100)
+    B.save__mml('B.graphml')
+
+    #CommunityG.save__mml('G.graphml')
 
     #CommunityH.save__mml('H.graphml')
 
