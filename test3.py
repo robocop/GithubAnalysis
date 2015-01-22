@@ -23,17 +23,17 @@ def get_bipartite_graph(input_file):
         B.add_node(data_line['repo']['name'], bipartite=1)
         B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
         
-        if i == 500:
+        if i == 1000:
             break
 
-    #for n in B.nodes():
-    #    if len(nx.node_connected_component(B,n)) < -1: # fix the lowest degree
-    #        B.remove_node(n)
+    for n in B.nodes():
+        if len(nx.node_connected_component(B,n)) < 5: # fix the lowest degree
+            B.remove_node(n)
 
     #nx.draw_graphviz(B,prog='circo')
     #nx.write_dot(B,'file2.dot')
     #plt.show()
-    nx.write_gml(B,'e.gml')
+    nx.write_dot(B,'e.dot')
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
