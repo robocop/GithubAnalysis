@@ -7,36 +7,43 @@ import sys
 #import matplotlib.pyplot as plt
 import numpy
 
-
 def median(lst):
     return numpy.median(numpy.array(lst))
 
-
 def mean(lst):
     return numpy.mean(numpy.array(lst))
-
 
 class BipartiteGraph:
     def __init__(self):
         self.B = nx.Graph()
 
     def load_gz(self, input_file):
+        """
+            Add the data of the file to the graph
+        """
         for line in gzip.open(input_file):
             data_line = json.loads(line.decode('utf8'))
-
             self.B.add_node(data_line['actor']['login'], bipartite=0)
             self.B.add_node(data_line['repo']['name'], bipartite=1)
             self.B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
 
     def get_authors(self):
+        """
+            Get the set of authors
+        """
         return set(n for n,d in self.B.nodes(data=True) if d['bipartite'] == 0)
 
     def get_repos(self):
+        """
+            Get the set of repositories
+        """
         return set(n for n,d in self.B.nodes(data=True) if d['bipartite'] == 1)
 
     def build_community_graph_from_bipartite_graph(self):
+        """"
+            Graph which nodes are the users and (uv) is an edge iff u and v has contributed to a same repository
+        """
         return nx.projected_graph(self.B, self.get_authors())
-
 
 class CommunityGraph:
     def __init__(self, G):
@@ -109,7 +116,6 @@ if __name__ == "__main__":
 
     #CommunityG.remove_small_connected_components(10)
 
-    
     CommunityG.general_characteristics(4)
     print('')
 
