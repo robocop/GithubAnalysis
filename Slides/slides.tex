@@ -1,4 +1,34 @@
-\documentclass[10pt, compress]{beamer}
+\documentclass[12pt,t]{beamer}
+
+\usetheme{default}
+\beamertemplatenavigationsymbolsempty
+\hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
+
+\definecolor{foreground}{RGB}{255,255,255}
+\definecolor{background}{RGB}{24,24,24}
+\definecolor{title}{RGB}{107,174,214}
+\definecolor{gray}{RGB}{155,155,155}
+\definecolor{subtitle}{RGB}{102,255,204}
+\definecolor{hilight}{RGB}{102,255,204}
+\definecolor{vhilight}{RGB}{255,111,207}
+
+\setbeamercolor{titlelike}{fg=title}
+\setbeamercolor{subtitle}{fg=subtitle}
+\setbeamercolor{institute}{fg=gray}
+\setbeamercolor{normal text}{fg=foreground,bg=background}
+
+\setbeamercolor{item}{fg=foreground} % color of bullets
+\setbeamercolor{subitem}{fg=gray}
+\setbeamercolor{itemize/enumerate subbody}{fg=gray}
+\setbeamertemplate{itemize subitem}{{\textendash}}
+\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
+\setbeamerfont{itemize/enumerate subitem}{size=\footnotesize}
+
+%\setbeamertemplate{footline}{%
+%    \raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[20pt]{\color{gray}
+%          \scriptsize\insertframenumber}}}\hspace*{5pt}}
+
+
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -28,6 +58,7 @@
 
 
 \begin{frame} % Events on 48h the 1 and 2 January 2015
+    \frametitle{Type of events}
     % From http://www.texample.net/tikz/examples/pie-chart-color/
     \def\angle{0}
     \def\radius{3}
@@ -35,6 +66,7 @@
     \newcount\cyclecount \cyclecount=-1
     \newcount\ind \ind=-1
     \begin{figure}
+    \resizebox{.9\linewidth}{!}{
     \begin{tikzpicture}[nodes = {font=\sffamily}]
       \foreach \percent/\name in {
         52.1/PushEvent,
@@ -73,6 +105,7 @@
           \fi
         };
     \end{tikzpicture}
+    }
     \end{figure}
 \end{frame}
 
