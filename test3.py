@@ -23,7 +23,7 @@ def get_bipartite_graph(input_file):
         B.add_node(data_line['repo']['name'], bipartite=1)
         B.add_edge(data_line['actor']['login'], data_line['repo']['name'])
         
-        if i == 1000000:
+        if i == 1000:
             break
 
     for n in B.nodes():
