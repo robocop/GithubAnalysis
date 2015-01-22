@@ -198,6 +198,8 @@ if __name__ == "__main__":
     #Logger.plot()
 
     ### Build a single graph with all the files
+    ### Filter the events (put None to filter nothing)
+    # List of possible events: https://developer.github.com/v3/activity/events/types/
     B = BipartiteGraph()
     for i in range(1,len(sys.argv)):
         B.load_gz(sys.argv[i],'PushEvent')
