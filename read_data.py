@@ -87,7 +87,10 @@ class CommunityGraph:
         A graph that links all the users that worked on a same project
     """
     def __init__(self, G):
-        self.graph = G.build_community_graph_from_bipartite_graph()
+        if isinstance(G,BipartiteGraph):
+            self.graph = G.build_community_graph_from_bipartite_graph()
+        else:
+            self.graph = G
 
     def general_characteristics(self, k=3):
         print('Density: %f' % nx.density(self.graph))
@@ -180,6 +183,7 @@ if __name__ == "__main__":
     #CommunityG.general_characteristics(4)
     #print('')
 
+    ### Build community graph
     #(H,alias) = CommunityG.communityGraph(4)
     #CommunityH = CommunityGraph(H)
     #CommunityH.general_characteristics(4)
