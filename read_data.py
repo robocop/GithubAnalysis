@@ -33,9 +33,16 @@ class GitHubActivity:
     def plot(self):
         x = []
         y = []
+        max_y = -1
+        max_x = 0
         for key in self.log.keys():
             x.append(key/24.)
             y.append(self.log[key])
+            if self.log[key] > max_y:
+                max_y = self.log[key]
+                max_x = key/24.
+
+        print('')
         plt.plot(x, y, 'r--')
         plt.show()
 
@@ -160,6 +167,18 @@ class CommunityGraph:
             print('Mean size of %d-clique communities: %f' % (k,mean([len(cc) for cc in kcliques])))
             print('Size of the biggest %d-clique communities: %d' % (k,max([len(cc) for cc in kcliques])))
 
+    def stat_cc(self):
+        stat = dict()
+        number_cc = nx.number_connected_components(self.graph)
+        for cc in nx.connected_components(self.graph):
+            if len(cc) in stat.keys():
+                stat[len(cc)] += 1
+            else:
+                stat[len(cc)] = 1
+
+        for key in stat.keys():
+            print('CC of size %d: %d/%d = %3f %%' % (key, stat[key], number_cc, 100*(float(stat[key])/number_cc)))
+
     def remove_isolated_nodes(self, deg):
         """
             Remove all nodes of degree <= deg
@@ -215,21 +234,22 @@ if __name__ == "__main__":
     #Logger.plot()
 
     ### Build a single graph with all the files
-    #B = BipartiteGraph()
-    #for i in range(1,len(sys.argv)):
-    #    B.load_gz(sys.argv[i])
+    B = BipartiteGraph()
+    for i in range(1,len(sys.argv)):
+        print(sys.argv[i])
+        B.load_gz(sys.argv[i])
 
     ### Read all the file of a folder
-    B = BipartiteGraph()
-    for file in os.listdir(sys.argv[1]):
-        print(file)
-        B.load_gz(sys.argv[1] + '/' + file,'IssuesEvent')
+    #B = BipartiteGraph()
+    #for file in os.listdir(sys.argv[1]):
+    #    print(file)
+    #    B.load_gz(sys.argv[1] + '/' + file,'IssuesEvent')
 
     ### Build projection, remove small cc << take a BipartiteGraph as input and output a CommunityGraph
-    #CommunityG = CommunityGraph(B)
-    #CommunityG.remove_small_connected_components(50)
+    CommunityG = CommunityGraph(B)
+    CommunityG.stat_cc()
 
-    ### Print general characteristics of a community graph
+    #CommunityG.remove_small_connected_components(50)
     #CommunityG.general_characteristics(4)
     #print('')
 
@@ -239,14 +259,14 @@ if __name__ == "__main__":
     #CommunityH.general_characteristics(4)
 
 #    B.remove_small_connected_components(100)
-    B.general_characteristics()
+    #B.general_characteristics()
 
-    B.clean()
+    #B.clean()
 
-    print('')
+    #print('')
 
-    B.general_characteristics(diameter=True)
-    B.save__mml('B.graphml')
+    #B.general_characteristics(diameter=True)
+    #B.save__mml('B.graphml')
 
     #CommunityG.save__mml('G.graphml')
 
