@@ -4,8 +4,8 @@
 \beamertemplatenavigationsymbolsempty
 \hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
 
-\definecolor{foreground}{RGB}{255,255,255}
-\definecolor{background}{RGB}{24,24,24}
+\definecolor{background}{RGB}{255,255,255}
+\definecolor{foreground}{RGB}{24,24,24}
 \definecolor{title}{RGB}{107,174,214}
 \definecolor{gray}{RGB}{155,155,155}
 \definecolor{darkBlue}{RGB}{27,84,124}
@@ -62,12 +62,14 @@
 \begin{frame}
     \frametitle{GitHub?}
     \begin{columns}
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.4\textwidth}
+        \vspace{1cm}
         \begin{figure}
         \includegraphics[width=0.9\textwidth]{Octocat.png}
         \end{figure}
     \end{column}
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.6\textwidth}
+        \vspace{2cm}
         \begin{itemize}
             \item A web-based Git repository hosting service
             \item More than 3 million users
@@ -82,7 +84,7 @@
     % From http://www.texample.net/tikz/examples/pie-chart-color/
     \def\angle{0}
     \def\radius{3}
-    \def\cyclelist{{"darkBlue","darkGray","darkBlue","darkGray"}}
+    \def\cyclelist{{"title","gray","title","gray"}}
     \newcount\cyclecount \cyclecount=-1
     \newcount\ind \ind=-1
     \begin{figure}
@@ -127,6 +129,13 @@
     \end{tikzpicture}
     }
     \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{One week activity}
+        \begin{figure}
+        \includegraphics[width=0.9\textwidth]{oneweekofactivity.png}
+        \end{figure}
 \end{frame}
 
 \begin{frame}
