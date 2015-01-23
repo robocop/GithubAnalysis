@@ -238,15 +238,15 @@ if __name__ == "__main__":
     #CommunityH = CommunityGraph(H)
     #CommunityH.general_characteristics(4)
 
-#    B.remove_small_connected_components(100)
-    B.general_characteristics()
+    B.remove_small_connected_components(100)
+    #B.general_characteristics()
 
-    B.clean()
+    #B.clean()
 
-    print('')
+    #print('')
 
-    B.general_characteristics(diameter=True)
-    B.save__mml('B.graphml')
+    #B.general_characteristics(diameter=True)
+    B.save__mml('Bip.graphml')
 
     #CommunityG.save__mml('G.graphml')
 
